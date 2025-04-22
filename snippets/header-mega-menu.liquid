@@ -1,0 +1,178 @@
+{% comment %}
+  Renders a megamenu for the header.
+
+  Usage:
+  {% render 'header-mega-menu' %}
+{% endcomment %}
+<style>
+  .list {
+    color:white;
+  }
+  .ancher {
+    color:white;
+  }
+  #bbb{
+    background:#046d80;
+    display: none;
+    position: absolute;
+   /* top: 120px; */
+  padding:10px;
+    z-index: 10;
+  }
+  #bbb:hover{
+    display:block;
+   
+    /* animation: fade_in_show 0.5s */
+  }
+  #aaaa:hover + #bbb {
+    display:block;
+   /* animation: fade_in_show 0.5s */
+  color: red;
+}
+  ul{
+    
+  }
+  li :hover {
+    /*text-decoration: underline; */
+  }
+  a: hover{
+    
+  }
+  
+</style>
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li class="list">
+        {%- if link.links != blank -%}
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu">
+              <summary
+                id="HeaderMenu-{{ link.handle }}"
+                class="header__menu-item list-menu__item link focus-inset"
+              >
+                <span
+                  {%- if link.child_active %}
+                    class="header__active-menu-item"
+                  {% endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                {% render 'icon-caret' %}
+              </summary>
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient motion-reduce global-settings-popup"
+                tabindex="-1"
+              >
+                <ul
+                  class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                  role="list"
+                >
+                  {%- for childlink in link.links -%}
+                    <li class="list">
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        href="{{ childlink.url }}"
+                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %} ancher "
+                        {% if childlink.current %}
+                          aria-current="page"
+                        {% endif %} 
+                      >
+                        {{ childlink.title | escape }}
+                      </a>
+                      {%- if childlink.links != blank -%}
+                        <ul class="list-unstyled" role="list">
+                          {%- for grandchildlink in childlink.links -%}
+                            <li class="list">
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %} ancher "
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %} 
+                              >
+                                {{ grandchildlink.title | escape }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </details>
+          </header-menu>
+        {%- else -%}
+          {%  if link.title == "Collections" %}
+
+              <a
+            id="aaaa"
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset ancher"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+                <div class="fdsafs" id="bbb" >
+                  <ul style="list-style-type: none;
+    display:grid;
+    grid-template-columns:repeat(3, 200px);
+    grid-gap:5px;">
+                 {% for collection in collections %}
+                   <li
+                    id="Slide-{{ section.id }}-{{ forloop.index }}"
+                      onMouseOver="this.style.text-decoration: 'underline'"
+                    class=" list">
+                     <a href="{{ collection.url  }}" style="color: white;text-decoration:none">
+                     {{ collection.title  }}
+                     </a>
+                     {% comment %}}
+                    {%- assign placeholder_image_index = forloop.index0 | modulo: 4 | plus: 1 -%}
+                    {%- assign placeholder_image = 'collection-apparel-' | append: placeholder_image_index -%}
+                    {% render 'card-collection',
+                      card_collection: collection,
+                      media_aspect_ratio: 1,
+                      columns: 12,
+                      placeholder_image: placeholder_image
+                    %}
+                   {% endcomment %}
+                  </li>
+                  
+              {% endfor %}
+                     </ul>
+                </div>
+            {% else %}
+            <a
+            id="HeaderMenu-{{ link.handle }}"
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset ancher"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+            {% endif %}
+          
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
